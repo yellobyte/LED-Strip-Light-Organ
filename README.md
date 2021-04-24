@@ -17,7 +17,7 @@ The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-S
 
 ## Technical infos ##
 
-For calculating the values of the 3 filter circuits the program **FilterLab** was used. It's easy and very intuitiv. An Arduino Nano 328P samples the respective filter output und transforms the voltage level in digital PWM signals which feed the PAs with their IRF540N Power MOSFETs. Overtemperature & electric overload (OL) protection has been integrated. 
+For calculating the values of the 3 filter circuits the program **FilterLab** was used. It's easy and very intuitive. An Arduino Nano 328P samples the respective filter output und transforms the voltage level into digital PWM signals which feed the PAs with their IRF540N Power MOSFETs. Overtemperature & electric overload (OL) protection has been integrated. 
 
 The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I tried several different PA designs and didn't have to redo the analog stages every time. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
 
@@ -43,7 +43,7 @@ The Power MOSFET IRF540N need a gate voltage higher than TTL can provide in this
 
 Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and allow to utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects over current it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent shortage on the output lines!
 
-The power stages by design could deliver a few amperes per channel, but in my case the external 12V power supply at hand (Mean Well GS90A12) can only deliver 6.7A DC, so I calibrated the limit to about 2.2A per channel using trimpots (trimmer potentiometer R7/R13/R19). The driver MOSFETs IRF540N operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
+The power stages by design could deliver a few amperes per channel, but in my case the external 12V power supply at hand (Mean Well GS90A12) can only deliver 6.7A DC, so I calibrated the current limit to about 2.2A per channel using trimpots (trimmer potentiometer R7/R13/R19). The driver MOSFETs IRF540N operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
 
 A temperature sensor LM35DZ is used to measure the temperature inside the enclosure. Temperatures over 50° celsius will shut down all channels and temperatures below 40° celsius will release it again. During my hour long tests the temperature overload never got triggered.
 
@@ -61,7 +61,7 @@ On the **Filter-PCB** the pre-amplifier stage, the automatic gain control (AGC) 
 
 Necessary steps in correct order:
 
-1) Adjust the trimpot R8 so that pins 1&2 of R8 are shorted (AGC is inactive that way). Apply a signal of 1kHz/0.5Vpp to X5 **or** X6 on the power board (one of the two Cinch/RCA sockets). It gets forwarded to LSP7 on the filter board (inverting input of pre-amplifier op amp IC1A). 
+1) Adjust the trimpot R8 so that pins 1 & 2 of R8 are shorted (AGC is inactive that way). Apply a signal of 1kHz/0.5Vpp to X5 **or** X6 on the power board (one of the two Cinch/RCA sockets). It gets forwarded to LSP7 on the filter board (inverting input of pre-amplifier op amp IC1A). 
 
 2) Choose a value of R12 so that the signal level at LSP2 (output of op amp IC1B) is close to 2.70Vpp. In my case I ended up with a R12 of 470k.
 
@@ -77,7 +77,7 @@ At this point the pre-amplifier & AGC stages are properly calibrated. The filter
 
 That's it. The analog circuit on the **Filter-PCB** is now fully calibrated.
 
-On the **Power-PCB** only the current limit of each channel (A/B/C) needs to be calibrated. That's a bit tricky as you need a current running through the MOSFETs that has exactly the value you want the IR2125 to trigger at. I used a cheap electronic load from Aliexpress (XY-FZ35) to accomplish that. 
+On the **Power-PCB** only the current limits of each channel (A/B/C) need to be calibrated. That's a bit tricky as you need a current running through the MOSFETs that has exactly the value you want the IR2125 to trigger at. I used a cheap electronic load from Aliexpress (XY-FZ35) to accomplish that. 
 
 Before you start make sure the Arduino Nano is REMOVED from the Power-PCB, your external power supply is NOT attached to the 12V power socket and there are NO jumpers on JP1/JP2/JP3 !
 
@@ -86,12 +86,12 @@ The following steps have to be done for each channel A/B/C:
 7) Adjust the trimpots R7/R13/R19 so that U1/U2/U3 pins 5 & 6 (CS & VS of IR2125) are shorted
 8) Attach a voltmeter to LSP12/LSP22/LSP32 and Ground
 9) Attach the electronic load to the channel output socket (the socket for the LED-strip) and set the current limit to the desired trigger value 
-10) Connect A/B/C-OUT (IR2125 pin 2) with LSP2 (+12V=). Switches the MOSFET on at the next step.
+10) Connect A/B/C-OUT (IR2125 pin 2) with LSP2 (+12V=). That will switch the MOSFET on at the next step.
 11) Now connect the external 12V power supply, the load should see the set current flow
 12) Turn the screw on the trimpots R7/R13/R19 so that the voltage on LSP12/LSP22/LSP32 just jumps from 0 to 4.7V. Don't turn any further but stop immediately!
 13) Remove the external 12V power supply and the electronic load 
 14) Put a jumper on pins 1 & 2 of JP1/JP2/JP3 and remove the connection between LSP2 and A/B/C-OUT
 15) proceed with the next channel
 
-Put the Arduino Nano back onto the board.
-Those settings done for all channels, in normal operation even a short on the output sockets won't destroy your output stage.
+Having all channels calibrated you can put the Arduino Nano back onto the board.
+Those settings done for all channels, even a short on the output sockets won't destroy your output stages.
