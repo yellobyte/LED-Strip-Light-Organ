@@ -6,13 +6,13 @@ Now that LED strips became fairly cheap they can replace normal light bulbs used
 ![github](https://github.com/yellobyte/LED-Strip-Light-Organ/raw/main/Doc/SequenceNormalMode.jpg)
 
 The electronic circuit of a normal light organ separates the audio signal into several frequency bands and dimms the light bulbs or LEDs according to the average level of each band.
-For a decent visual impression at least 3 channels are needed: low frequencies (bass), middle frequencies and high frequencies (treble). For best visual results each channel should controle a light sources of different color, e.g bass = red, middle = yellow and treble = green.
+For a decent visual impression at least 3 channels are needed: low frequencies (bass), middle frequencies and high frequencies (treble). For best visual results each channel should control a light sources of different color, e.g bass = red, middle = yellow and treble = green.
 
-In our case we control 3 LED strips that are specified for 12V DC. The device can deliver a few amperes per channel, in my case the external power supply at hand (Mean Well GS90A12) can only deliver 6.7A DC so I set the limit to about 2.2A per channel using trimpots (trimmer potentiometer). The driver MOSFETs IRF540N operate way from their limits and only get handwarm.
+In our case we control 3 LED strips that are specified for 12V DC. The device by design could deliver a few amperes per channel, but in my case the external 12V power supply at hand (Mean Well GS90A12) can only deliver 6.7A DC, so I calibrated the limit to about 2.2A per channel using trimpots (trimmer potentiometer). The driver MOSFETs IRF540N operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
 
 Since different LED strips vary in their electrical parameters, their respective current ratings and the external 12V power supply you have available determine the length of the LED Strips you are able to use in the end.
 
-The LED Strips I have tested with are equipped with 3528 SMD LEDs, have 60 LEDs per meter and are 5m long. They proved no problems at all and never triggered the electric overload circuitry.
+The LED Strips I have tested with are equipped with 3528 SMD LEDs, have 60 LEDs per meter length and are 5m long. They proved no problems at all and never triggered the electric overload circuitry.
 
 The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Normal%20Mode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Rhythm%20Mode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected via pressing the **mode selection** button.
 
@@ -27,7 +27,7 @@ The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Pow
 
 ## How to calibrate ##
 
-The pre-amplifier stage, the automatic gain control stage and all three filter circuits have to be calibrated in order to produce decent results. This procedure itself is fairly easy to be accomplished. Only obstacle is you need a function generator and ideally an oscilloscope. A cheap multimeter will do if you can´t get hold of the latter.
+The pre-amplifier stage, the automatic gain control stage and all three filter circuits have to be calibrated in order to produce optimal results. The procedure itself is fairly easy to be accomplished. Only obstacle is you need a function generator and ideally an oscilloscope. A cheap multimeter will do if you can´t get hold of the latter.
 
 
 
