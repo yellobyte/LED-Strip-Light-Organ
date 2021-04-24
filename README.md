@@ -20,7 +20,7 @@ The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-S
 
 For calculating the values of the 3 filter circuits the program **FilterLab** was used. It's easy and very intuitiv. An Arduino Nano 328P samples the respective filter output und transforms the voltage level in digital PWM signals which feed the PAs with their IRF540N Power MOSFETs. Overtemperature & electric overload (OL) protection has been integrated. 
 
-The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I tried several different PA designs and didn't have to redo the filter part every time. Please have a look at folder **EagleFiles** for schematic & PCB details.
+The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I tried several different PA designs and didn't have to redo the filter part every time. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
 
 ![github](https://github.com/yellobyte/LED-Strip-Light-Organ/raw/main/Doc/Block%20Diagram.jpg)
 
