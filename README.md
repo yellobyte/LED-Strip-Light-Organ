@@ -29,7 +29,7 @@ The block diagram of the light organ is as follows:
 
 ### The Filter-PCB: ###
 
-The MC33078 op amps in the pre-amplifier and AGC stages proved to be perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
+The MC33078 op amps in the pre-amplifier and AGC stages proved perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
 
 The cheap LM358 op amps used in the 3 filter stages generate crossover distortion as well but this is of no consequence in that particular application.
 
