@@ -9,15 +9,17 @@ The electronic circuit of a normal light organ separates the audio signal into s
 
 For a decent visual impression at least 3 bands (channels) are needed: low frequencies (bass), middle frequencies and high frequencies (treble). For best visual results each channel should control a light source of different color, e.g bass = red, middle = yellow and treble = green.
 
-In our case we control 3 LED strips that are specified for 12V DC. Since different LED strips vary in their electrical parameters, their respective current ratings and the external 12V power supply you use determine the maximum length of the LED Strips the device can handle.
+## Technical Infos ##
 
-The LED Strips I have tested with are equipped with 3528 SMD LEDs, have 60 LEDs per meter length and are 5m long. They proved no problems at all and never triggered the electric overload circuitry.
+In our case we have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips our device can handle is determined by the current consumption (amperes per meter length) of each LED Strip and the external 12V power supply you use.
+
+(The LED Strips I tested with were equipped with 3528 SMD LEDs, had 60 LEDs per meter length and were 5m long. They proved no problem at all and never triggered the overcurrent protection circuitry which was set to 2.2A).
 
 The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected via pressing the **mode selection** button.
 
-## Technical infos ##
+Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs) with mostly uncommon values. Please stick to those exact values as they define the quality of the 3 filters! All filter components were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
 
-For calculating the values of the 3 filter circuits the program **FilterLab** was used. It's easy and very intuitive. An Arduino Nano 328P samples the respective filter output und transforms the voltage level into digital PWM signals which feed the PAs with their IRF540N Power MOSFETs. Overtemperature & electric overload (OL) protection has been integrated. 
+An Arduino Nano 328P continuously samples all 3 filter outputs und transforms their voltage levels into digital PWM signals which feed the output stages with their IRF540N Power MOSFETs. Overtemperature & overcurrent protection (overload OL protection) has been integrated. 
 
 The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I tried several different PA designs and didn't have to redo the analog stages every time. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
 
@@ -35,7 +37,7 @@ The AGC stage is simple but very effective and doesn't produce hardly any distor
 
 Remarks to the **Power-PCB**:
 
-The Arduino Nano 328P is the ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It runs on 16MHz only but this proved to be fast enough for the task.
+The little Arduino Nano 328P module is the ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
 
 The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/Software). The IDE used was VSCode/PlatformIO.
 
