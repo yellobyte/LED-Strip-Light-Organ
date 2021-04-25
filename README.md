@@ -26,7 +26,7 @@ The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Pow
 The block diagram of the light organ is as follows:
 
 <img src="Doc/BlockDiagram.jpg">
-
+   
 ### The Filter-PCB: ###
 
 The MC33078 op amps in the pre-amplifier and AGC stages proved perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
@@ -38,7 +38,7 @@ The AGC stage is simple but very effective and produces hardly any distortion ev
 LED1 to LED6 have been added mainly for testing purposes. They come handy when you don't have any LED-Strips available but still want to do some tests on the device. They too are PWM controlled and show the exact same visual effects as the LED-Strips would.
 
 <img src="EagleFiles/Filter-PCB/Schematic.JPG">
-<br/><br/>
+<br/>
   
 ### The Power-PCB: ###
 
