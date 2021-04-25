@@ -11,9 +11,15 @@ For a decent visual impression at least 3 bands (channels) are needed: low frequ
 
 ## Technical Infos ##
 
+<<<<<<< HEAD
 We have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips our device can handle is determined by the current consumption (amperes per meter length) of each LED Strip and the maximum current rating of the external 12V power supply used.
 
 As an example: The LED Strips I tested with were equipped with 3528 SMD LEDs (red, yellow or green), had 60 LEDs per meter length and were 5m long. They proved no problem at all and never triggered the overcurrent protection circuitry which was set to 2.2 Amperes.
+=======
+In our case we have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips our device can handle is determined by the current consumption (amperes per meter length) of each LED Strip and the maximum current rating of the external 12V power supply used.
+
+(The LED Strips I tested with were equipped with 3528 SMD LEDs, had 60 LEDs per meter length and were 5m long. They proved no problem at all and never triggered the overcurrent protection circuitry which was set to 2.2A).
+>>>>>>> 83e1bb538d3e2102ef53a3357d16fdf53f5b68e7
 
 The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected by pressing the **mode selection** button.
 
@@ -28,6 +34,7 @@ The block diagram of the light organ is as follows:
 <img src="Doc/BlockDiagram.jpg">
 
 ### The Filter-PCB: ###
+<<<<<<< HEAD
 
 The MC33078 op amps in the pre-amplifier and AGC stages proved to be perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
 
@@ -40,6 +47,15 @@ LED1 to LED6 have been added mainly for testing purposes. They come handy when y
 <img src="EagleFiles/Filter-PCB/Schematic.JPG">
 <br/><br/>
   
+=======
+
+The MC33078 op amps in the pre-amplifier and AGC stages proved to be perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
+
+The cheap LM358 op amps used in the 3 filter stages generate crossover distortion as well but this is of no consequence in that particular application.
+
+The AGC stage is simple but very effective and produces hardly any distortion even with high input signals applied. This stage is needed in order to normalize the signal level fed into the filter stages as the signal level from the many audio sources can vary by an order of magnitude (MP3/CD/Vinyl player, FM or internet radio, etc.).
+
+>>>>>>> 83e1bb538d3e2102ef53a3357d16fdf53f5b68e7
 ### The Power-PCB: ###
 
 The little Arduino Nano 328P module is the ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
@@ -59,11 +75,16 @@ JP1/JP2/JP3 are only needed for testing purposes, in normal working mode pins 1 
 Push button S1 is only used for selecting the working mode.
 
 The three TVS Diodes P6KE20A (D5/D9/D13) in parallel with the output sockets have a very fast response time and protect the device from possibly harmful voltage transients that might travel in from connected LED Strips. The latter act like big antennas when a few meters long!
+<<<<<<< HEAD
 
 D1 provides the very stable reference voltage needed by the A/D converters in the Arduino Nano.
 
 <img src="EagleFiles/Power-PCB/Schematic.JPG">
 <br/><br/>
+=======
+
+D1 provides the very stable reference voltage needed by the A/D converters in the Arduino Nano.
+>>>>>>> 83e1bb538d3e2102ef53a3357d16fdf53f5b68e7
 
 ## How to calibrate the circuit ##
 
