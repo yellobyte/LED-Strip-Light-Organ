@@ -35,7 +35,7 @@ The cheap LM358 op amps used in the 3 filter stages generate crossover distortio
 
 The AGC stage is simple but very effective and produces hardly any distortion even with high input signals applied. This stage is needed in order to normalize the signal level fed into the filter stages as the signal level from the many audio sources can vary by an order of magnitude (MP3/CD/Vinyl player, FM or internet radio, etc.).
 
-LED1 to LED6 have been added mainly for testing purposes. They come handy when you don't have any LED-Strips available but still want to do some tests on the device. They too are PWM controlled and basically show the exact same visual effects as the LED-Strips would.
+LED1 to LED6 have been added mainly for testing purposes. They come handy when you don't have any LED-Strips available but still want to do some tests on the device. They too are PWM controlled and show the exact same visual effects as the LED-Strips would.
 
 <img src="EagleFiles/Filter-PCB/Schematic.JPG">
 <br/><br/>
