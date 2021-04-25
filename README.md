@@ -15,7 +15,7 @@ In our case we have 3 channels and therefore control 3 LED Strips. Their specifi
 
 (The LED Strips I tested with were equipped with 3528 SMD LEDs, had 60 LEDs per meter length and were 5m long. They proved no problem at all and never triggered the overcurrent protection circuitry which was set to 2.2A).
 
-The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected via pressing the **mode selection** button.
+The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected by pressing the **mode selection** button.
 
 Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs) with mostly uncommon values. Please stick to those exact values as they define the quality of the 3 filters! All filter components were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
 
