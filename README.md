@@ -21,27 +21,27 @@ Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs)
 
 An Arduino Nano 328P continuously samples all 3 filter outputs und transforms their voltage levels into digital PWM signals which feed the output stages with their IRF540N Power MOSFETs. Overtemperature & overcurrent protection (overload OL protection) has been integrated. 
 
-The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I tried several different PA designs and didn't have to redo the analog stages every time. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
+The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I redesigned the output stages a few times and didn't have to redo the analog stages every time. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
 
 The block diagram of the light organ is as follows:
 
 <img src="Doc/BlockDiagram.jpg">
 
-Remarks to the **Filter-PCB**:
+### The Filter-PCB: ###
 
-The MC33078 op amps proved to be perfect for the task but might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail. The TLC277 showed some crossover distortion.
+The MC33078 op amps in the pre-amplifier and AGC stages proved to be perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
 
-The cheap LM358 op amp used in the filter stages generates crossover distortion as well but this is of no consequence in that particular application.
+The cheap LM358 op amps used in the 3 filter stages generate crossover distortion as well but this is of no consequence in that particular application.
 
-The AGC stage is simple but very effective and doesn't produce hardly any distortion even with high input signals applied. This stage is needed in order to normalize the signal level fed into the filter stages as the signal level from the many audio sources can vary by an order of magnitude (mp3 file, CD, vinyl player, internet radio, etc.).
+The AGC stage is simple but very effective and produces hardly any distortion even with high input signals applied. This stage is needed in order to normalize the signal level fed into the filter stages as the signal level from the many audio sources can vary by an order of magnitude (MP3/CD/Vinyl player, FM or internet radio, etc.).
 
-Remarks to the **Power-PCB**:
+### The Power-PCB: ###
 
 The little Arduino Nano 328P module is the ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
 
 The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/Software). The IDE used was VSCode/PlatformIO.
 
-The Power MOSFET IRF540N need a gate voltage higher than TTL can provide in this application so 12V DC-DC converters had to be used. There output is kind of floating as can be seen in the schematic.
+The Power MOSFETs IRF540N work as High-Side Switch (common drain configuration) and need a gate voltage higher than TTL can provide in this application, thats why 12V DC-DC converters had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs drive the MOSFETs gate voltage 12V higher than the supply voltage.
 
 Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and allow to utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects over current it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent shortage on the output lines!
 
