@@ -1,7 +1,7 @@
 # LED-Strip Light Organ #
 
 A light (or color) organ is an electronic device which converts an audio signal into rhythmic light effects. Invented in the 70's they are still popular in discotheques and party rooms though.
-Now that **LED strips** became fairly cheap they can replace normal light bulbs used in the earlier years and make the color organ look more modern.
+Now that **LED Strips** became fairly cheap they can replace normal light bulbs used in the earlier years and make the color organ look more modern.
 
 <img src="Doc/SequenceNormalMode.jpg">
 
@@ -11,7 +11,7 @@ For a decent visual impression at least 3 bands (channels) are needed: low frequ
 
 ## Technical Infos ##
 
-In our case we have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips our device can handle is determined by the current consumption (amperes per meter length) of each LED Strip and the external 12V power supply you use.
+In our case we have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips our device can handle is determined by the current consumption (amperes per meter length) of each LED Strip and the maximum current rating of the external 12V power supply used.
 
 (The LED Strips I tested with were equipped with 3528 SMD LEDs, had 60 LEDs per meter length and were 5m long. They proved no problem at all and never triggered the overcurrent protection circuitry which was set to 2.2A).
 
@@ -41,25 +41,26 @@ The little Arduino Nano 328P module is the ideal device for sampling the three f
 
 The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/Software). The IDE used was VSCode/PlatformIO.
 
-The Power MOSFETs IRF540N work as High-Side Switch (common drain configuration) and need a gate voltage higher than TTL can provide in this application, thats why 12V DC-DC converters had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs drive the MOSFETs gate voltage 12V higher than the supply voltage.
+The Power MOSFETs IRF540N work as High-Side Switch (common drain configuration) and need a gate voltage higher than TTL can provide in this application, thats why 12V DC-DC converters (I/O isolated) had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs must drive the MOSFETs gate voltage 10-12V higher than the supply voltage.
 
-Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and allow to utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects over current it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent shortage on the output lines!
+Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and allow to utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects overcurrent it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent shortage on the output lines, provided you properly calibrated the trigger point of course!
 
 The power stages by design could deliver a few amperes per channel, but in my case the external 12V power supply at hand (Mean Well GS90A12) can only deliver 6.7A DC, so I calibrated the current limit to about 2.2A per channel using trimpots (trimmer potentiometer R7/R13/R19). The driver MOSFETs IRF540N operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
 
-A temperature sensor LM35DZ is used to measure the temperature inside the enclosure. Temperatures over 50° celsius will shut down all channels and temperatures below 40° celsius will release it again. During my hour long tests the temperature overload never got triggered.
+A temperature sensor LM35DZ connected to an Arduino Nano analog input pin is used to measure the temperature inside the enclosure. Temperatures over 50° celsius will shut down all channels and temperatures below 40° celsius will release them again. However, during my hour long tests the temperature overload never got triggered.
 
-JP1/JP2/JP3 are only needed for testing purposes, in normal working mode pins 1&2 should be shorted in order to allow the overload signal from the IR2125 reach the Arduino Nano. R2/SV3 are only used for testing purposes as well.
+JP1/JP2/JP3 are only needed for testing purposes, in normal working mode pins 1 & 2 should be shorted in order to allow the overload signal from the IR2125 ICs reach the Arduino Nano. R2/SV3 are only used for testing purposes as well.
 
 Push button S1 is only used for selecting the working mode.
 
-The three TVS Diodes P6KE20A (D5/D9/D13) have a very fast response time and protect the device from voltage transients that might travel in from connected LED strips. The latter act like big antennas when a few meters long!
+The three TVS Diodes P6KE20A (D5/D9/D13) in parallel with the output sockets have a very fast response time and protect the device from possibly harmful voltage transients that might travel in from connected LED Strips. The latter act like big antennas when a few meters long!
 
-D1 provides the reference voltage needed by the A/D converters in the Arduino Nano.
+D1 provides the very stable reference voltage needed by the A/D converters in the Arduino Nano.
 
 ## How to calibrate the circuit ##
 
-On the **Filter-PCB** the pre-amplifier stage, the automatic gain control (AGC) stage and all three filter circuits have to be calibrated in order to produce optimal results. The procedure itself is fairly easy. Only obstacle is you need a function generator and ideally an oscilloscope. A cheap multimeter will do if you can´t get hold of the latter.
+### Filter-PCB: ###
+The pre-amplifier stage, the automatic gain control (AGC) stage and all three filter circuits have to be calibrated in order to produce optimal results. The procedure itself is fairly easy. Only obstacle is you need a function generator and ideally an oscilloscope. A cheap multimeter will do if you can´t get hold of such equipment but might spoil optimal performance of the device.
 
 Necessary steps in correct order:
 
@@ -79,21 +80,22 @@ At this point the pre-amplifier & AGC stages are properly calibrated. The filter
 
 That's it. The analog circuit on the **Filter-PCB** is now fully calibrated.
 
-On the **Power-PCB** only the current limits of each channel (A/B/C) need to be calibrated. That's a bit tricky as you need a current running through the MOSFETs that has exactly the value you want the IR2125 to trigger at. I used a cheap electronic load from Aliexpress (XY-FZ35) to accomplish that. 
+### Power-PCB: ###
+Only the current limits of each channel (A/B/C) need to be calibrated. That's a bit tricky as you need a current running through the MOSFETs that has exactly the value you want the IR2125 to trigger. I used a cheap electronic load from Aliexpress (XY-FZ35) to accomplish that. 
 
 Before you start make sure the Arduino Nano is REMOVED from the Power-PCB, your external power supply is NOT attached to the 12V power socket and there are NO jumpers on JP1/JP2/JP3 !
 
-The following steps have to be done for each channel A/B/C:
+The following steps have to be done for each channel A/B/C, starting with channel A:
 
-7) Adjust the trimpots R7/R13/R19 so that U1/U2/U3 pins 5 & 6 (CS & VS of IR2125) are shorted
-8) Attach a voltmeter to LSP12/LSP22/LSP32 and Ground
+7) Adjust the trimpot R7 (R13/R19) so that U1 (U2/U3) pins 5 & 6 (CS & VS of IR2125) are shorted
+8) Attach a voltmeter to LSP12 (LSP22/LSP32) and Ground
 9) Attach the electronic load to the channel output socket (the socket for the LED-strip) and set the current limit to the desired trigger value 
-10) Connect A/B/C-OUT (IR2125 pin 2) with LSP2 (+12V=). That will switch the MOSFET on at the next step.
-11) Now connect the external 12V power supply, the load should see the set current flow
-12) Turn the screw on the trimpots R7/R13/R19 so that the voltage on LSP12/LSP22/LSP32 just jumps from 0 to 4.7V. Don't turn any further but stop immediately!
+10) Connect A-OUT (B/C-OUT) (IR2125 pin 2) with LSP2 (+12V=). That will switch the MOSFET on at the next step.
+11) Now connect the external 12V power supply, the electronic load should see the programmed current flow
+12) Slowly turn the screw on trimpot R7 (R13/R19) so that the voltage on LSP12 (LSP22/LSP32) just jumps from 0 to 4.7V. Stop turning immediately!
 13) Remove the external 12V power supply and the electronic load 
-14) Put a jumper on pins 1 & 2 of JP1/JP2/JP3 and remove the connection between LSP2 and A/B/C-OUT
+14) Put the jumper back on pins 1 & 2 of JP1 (JP2/JP3) and remove the connection between LSP2 and A-OUT (B/C-OUT)
 15) proceed with the next channel
 
 Having all channels calibrated you can put the Arduino Nano back onto the board.
-Those settings done for all channels, even a short on the output sockets won't destroy your output stages.
+Those settings properly done for all channels, even a permanent short on the output sockets won't destroy your output stages.
