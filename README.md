@@ -38,8 +38,7 @@ The AGC stage is simple but very effective and produces hardly any distortion ev
 LED1 to LED6 have been added mainly for testing purposes. They come handy when you don't have any LED-Strips available but still want to do some tests on the device. They too are PWM controlled and show the exact same visual effects as the LED-Strips would.
 
 <img src="EagleFiles/Filter-PCB/Schematic.JPG">
-<br/>
-  
+     
 ### The Power-PCB: ###
 
 The little Arduino Nano 328P module is the ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
@@ -63,8 +62,7 @@ The three TVS Diodes P6KE20A (D5/D9/D13) in parallel with the output sockets hav
 D1 provides the very stable reference voltage needed by the A/D converters in the Arduino Nano.
 
 <img src="EagleFiles/Power-PCB/Schematic.JPG">
-<br/><br/>
-
+   
 ## How to calibrate the circuit ##
 
 ### Filter-PCB: ###
