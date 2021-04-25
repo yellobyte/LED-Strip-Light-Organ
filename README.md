@@ -7,9 +7,9 @@ Now that **LED strips** became fairly cheap they can replace normal light bulbs 
 
 The electronic circuit of a normal light organ separates the audio signal into several frequency bands and dimms the light bulbs or LEDs according to the average level of each band.
 
-For a decent visual impression at least 3 channels are needed: low frequencies (bass), middle frequencies and high frequencies (treble). For best visual results each channel should control a light sources of different color, e.g bass = red, middle = yellow and treble = green.
+For a decent visual impression at least 3 bands (channels) are needed: low frequencies (bass), middle frequencies and high frequencies (treble). For best visual results each channel should control a light source of different color, e.g bass = red, middle = yellow and treble = green.
 
-In our case we control 3 LED strips that are specified for 12V DC. Since different LED strips vary in their electrical parameters, their respective current ratings and the external 12V power supply you have available determine the length of the LED Strips you are able to use in the end.
+In our case we control 3 LED strips that are specified for 12V DC. Since different LED strips vary in their electrical parameters, their respective current ratings and the external 12V power supply you use determine the maximum length of the LED Strips the device can handle.
 
 The LED Strips I have tested with are equipped with 3528 SMD LEDs, have 60 LEDs per meter length and are 5m long. They proved no problems at all and never triggered the electric overload circuitry.
 
