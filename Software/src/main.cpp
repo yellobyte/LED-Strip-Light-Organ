@@ -1,17 +1,17 @@
 
 /*
- * LED-Strip Light Organ
+ * LED-Strip Light Organ with 3 channels
  *
  * Bass:  level at ADC0 (PC0, Arduino Nano: A0) determines PWM value at OC0A (PD6, Arduino Nano: D6),
- *        respective overload signal at PD4 (PCINT20, Arduino Nano: D4)
+ *        associated overload signal at PD4 (PCINT20, Arduino Nano: D4)
  * Middle: level at ADC1 (PC1, Arduino Nano: A1) determines PWM value at OC0B (PD5, Arduino Nano: D5)
- *         respective overload signal at PB0 (PCINT0, Arduino Nano: D8)
+ *         associated overload signal at PB0 (PCINT0, Arduino Nano: D8)
  * Treble: level at ADC2 (PC2, Arduino Nano: A2) determines PWM value at OC2A (PB3, Arduino Nano: D11)
- *         respective overload signal at PB4 (PCINT4, Arduino Nano: D12)
+ *         associated overload signal at PB4 (PCINT4, Arduino Nano: D12)
  * Overload: LED at PB2 (Arduino Nano: D10)
  *           A single channel stays off for 10 sec after detecting an overload.
- *           After detecting thermal overload (ca. 50 deg celsius) all channels stay off until the temperature
- *           drops below 40 deg celsius again or after reboot when temp < 50 deg.
+ *           After detecting thermal overload (ca. 50° celsius) all channels stay off until the temperature
+ *           drops below 40° celsius or after reboot when temp < 50 deg.
  * Temperature control: LM35 delivers 0mV + 10mV per deg celsius at ADC6 (Arduino Nano: A6). 
  * Mode Switch: connected to PB1 (Arduino Nano: D9) for selecting operation mode.
  *
@@ -20,28 +20,21 @@
  */ 
 
 #include <Arduino.h>
-//#include <avr/pgmspace.h>
-//#include <avr/io.h>
-//#include <avr/interrupt.h>
-//#include <util/delay.h>
-//#include <stdio.h>		// wg. printf()
-//#include <time.h>
-//#include <avr/wdt.h> 
 
-#define NUM_WORKING_MODES	3
-#define NUM_CHANNELS		  3
-#define OL_TIMER_VALUE		5000		      // 5s
-#define ADC_REF_EXT	      0
-#define ADC_REF_VCC	      1
+#define NUM_WORKING_MODES 3
+#define NUM_CHANNELS      3
+#define OL_TIMER_VALUE    5000		      // 5s
+#define ADC_REF_EXT       0
+#define ADC_REF_VCC       1
 
-volatile uint8_t overload;				      // overload marker: Bit 7 for temp & Bit 2-0 for channels
-volatile uint8_t overloadMessage;		    // overload message to be printed
-volatile uint8_t blinkStatus;			      // overload LED status
-volatile uint16_t timer[NUM_CHANNELS];	// timer per channel (for overload handling)
-volatile uint16_t timerTemperature;		  // timer for checking temp
-volatile uint16_t timerMode;			      // timer used in misc modes
+volatile uint8_t overload;              // overload marker: Bit 7 for temp & Bit 2-0 for channels
+volatile uint8_t overloadMessage;       // overload message to be printed
+volatile uint8_t blinkStatus;           // overload LED status
+volatile uint16_t timer[NUM_CHANNELS];  // timer per channel (for overload handling)
+volatile uint16_t timerTemperature;     // timer for checking temp
+volatile uint16_t timerMode;            // timer used in misc modes
 volatile uint8_t timerBlink;
-uint8_t workingMode;					          // 0 = normal light organ, 1 = bass rhythm, 2 = in turn) 
+uint8_t workingMode;                    // 0 = normal light organ, 1 = bass rhythm, 2 = in turn) 
 
 uint8_t pwm, valueOld[NUM_CHANNELS], valueNew = 0, i = 0, ii = 0;
 uint16_t adc = 0;
