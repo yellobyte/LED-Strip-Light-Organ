@@ -98,7 +98,7 @@ The following steps have to be done for each channel A/B/C, starting with channe
 9) Attach the electronic load to the channel output socket (the socket for the LED-strip) and set the current limit to the desired trigger value 
 10) Connect A-OUT (B/C-OUT) (IR2125 pin 2) with LSP2 (+12V=). That will switch the MOSFET on at the next step.
 11) Now connect the external 12V power supply, the electronic load should see the programmed current flow
-12) Slowly turn the screw on trimpot R7 (R13/R19) so that the voltage on LSP12 (LSP22/LSP32) just jumps from 0 to 4.7V. Stop turning immediately!
+12) Slowly turn the screw on trimpot R7 (R13/R19) until the voltage on LSP12 (LSP22/LSP32) jumps from 0 to 4.7V. Stop turning immediately!
 13) Remove the external 12V power supply and the electronic load 
 14) Put the jumper back on pins 1 & 2 of JP1 (JP2/JP3) and remove the connection between LSP2 and A-OUT (B/C-OUT)
 15) proceed with the next channel
