@@ -17,8 +17,6 @@ To give you a real world example: The external power supply I tested the device 
 
 The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected by pressing the **mode selection** button. 
 
-Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs). The resistors with strange values (6k16, 14k7, 16k9, 23k7 & 71k5) belong to the E48 (2%) or E96 (1%) series. The filter circuits (2nd order) were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
-
 An Arduino Nano 328P continuously samples all 3 filter outputs und transforms their voltage levels into digital PWM signals which feed the output stages with their IRF540N Power MOSFETs. Overtemperature & overcurrent protection (overload OL protection) has been integrated. 
 
 The electrical circuit had to be devided into 2 separate [PCBs](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/BoardTop.JPG), a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and PCB size is limited to Eurocard size. But this proved to be very fortunate in the end for I redesigned the output stages a few times but didn't have to redo the analog stages. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
@@ -29,11 +27,13 @@ The block diagram of the light organ is as follows:
    
 ### The Filter-PCB: ###
 
-The MC33078 op amps in the pre-amplifier and AGC stages proved perfect for the task. They might be substituted with cheaper op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
+The MC33078 Op amps in the pre-amplifier and AGC stages proved perfect for the task. They might be substituted with cheaper Op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
 
-The cheap LM358 op amps used in the 3 filter stages generate crossover distortion as well but this is of no consequence in that particular application.
+The cheap LM358 Op amps used in the 3 filter stages generate crossover distortion as well but this is of no consequence in that particular application.
 
 The AGC stage is simple but very effective and produces hardly any distortion even with high input signals applied. This stage is needed in order to normalize the signal level fed into the filter stages as the signal level from the many audio sources can vary by an order of magnitude (MP3/CD/Vinyl player, FM or internet radio, etc.).
+
+Each of the 3 filter circuits uses an Op amp and some passive components (Rs/Cs). The resistors with strange values (6k16, 14k7, 16k9, 23k7, 71k5) belong to the E48 (2%) or E96 (1%) series. The filter circuits (2nd order) were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
 
 LED1 to LED6 have been added mainly for testing purposes. They come handy when you don't have any LED-Strips available but still want to do some tests on the device. They too are PWM controlled and show the exact same visual effects as the LED-Strips would.
 
@@ -41,13 +41,13 @@ LED1 to LED6 have been added mainly for testing purposes. They come handy when y
      
 ### The Power-PCB: ###
 
-The Arduino Nano 328P module is an ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
+The Arduino Nano 328P module is an ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved fast enough for the task.
 
 The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Software). The code was generated with VSCode/PlatformIO.
 
 The Power MOSFETs IRF540N work as High-Side Switches (in "common drain" configuration) and need a gate voltage higher than the Nano can provide in this application, thats why 12V DC-DC converters (I/O isolated -> output side floating) had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs must drive the MOSFETs gate voltage 10-12V higher than the supply voltage.
 
-Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects overcurrent it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent short on the output lines, provided you properly calibrated the trigger point of course!
+Shunt resistors (R6/R12/R18 - 0.15Ohm/2W/5%/Wire) sit between the MOSFETs and the LED strips in order to measure the output current and utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects overcurrent it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent short on the output lines, provided you properly calibrated the trigger point of course!
 
 The power stages by design could deliver 3-4 amperes per channel without problems. In practice the limiting factor probably will be the external 12V DC power supply. The driver MOSFETs IRF540N (Idmax > 20A) operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
 
@@ -70,9 +70,9 @@ The pre-amplifier stage, the automatic gain control (AGC) stage and all three fi
 
 Necessary steps in correct order:
 
-1) Adjust the trimpot R8 so that pins 1 & 2 of R8 are shorted (AGC is inactive that way). Apply a signal of 1kHz/0.5Vpp to X5 **or** X6 on the power board (one of the two Cinch/RCA sockets). It gets forwarded to LSP7 on the filter board (inverting input of pre-amplifier op amp IC1A). 
+1) Adjust the trimpot R8 so that pins 1 & 2 of R8 are shorted (AGC is inactive that way). Apply a signal of 1kHz/0.5Vpp to X5 **or** X6 on the power board (one of the two Cinch/RCA sockets). It gets forwarded to LSP7 on the filter board (inverting input of pre-amplifier Op amp IC1A). 
 
-2) Choose a value of R12 so that the signal level at LSP2 (output of op amp IC1B) is close to 2.70Vpp. In my case I ended up with a R12 of 470k.
+2) Choose a value of R12 so that the signal level at LSP2 (output of Op amp IC1B) is close to 2.70Vpp. In my case I ended up with a R12 of 470k.
 
 3) Increase the amplitude of the input signal to 2.0Vpp. Now adjust the trimpot R8 so that the signal level at LSP2 is close to 3.2Vpp.
 
