@@ -17,11 +17,11 @@ To give you a real world example: The external power supply I tested the device 
 
 The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected by pressing the **mode selection** button. 
 
-Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs). The resistors with strange values (6k16, 14k7, 23k7 & 71k5) belong to the E48 (2%) or E96 (1%) series. The filter circuits were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
+Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs). The resistors with strange values (6k16, 14k7, 16k9, 23k7 & 71k5) belong to the E48 (2%) or E96 (1%) series. The filter circuits (2nd order) were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
 
 An Arduino Nano 328P continuously samples all 3 filter outputs und transforms their voltage levels into digital PWM signals which feed the output stages with their IRF540N Power MOSFETs. Overtemperature & overcurrent protection (overload OL protection) has been integrated. 
 
-The electrical circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and PCB size is limited to Eurocard size. But this proved to be very fortunate in the end for I redesigned the output stages a few times but didn't have to redo the analog stages. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
+The electrical circuit had to be devided into 2 separate [PCBs](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/BoardTop.JPG), a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and PCB size is limited to Eurocard size. But this proved to be very fortunate in the end for I redesigned the output stages a few times but didn't have to redo the analog stages. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
 
 The block diagram of the light organ is as follows:
 
