@@ -11,17 +11,17 @@ For a decent visual impression at least 3 bands (channels) are needed: low frequ
 
 ## Technical Infos ##
 
-We have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips our device can handle is determined by the current consumption (amperes per meter length) of each LED Strip and the maximum current rating of the external 12V power supply used.
+We have 3 channels and therefore control 3 LED Strips. Their specified working voltage must be 12V DC. The maximum length of the LED Strips the device can handle is mainly determined by the current consumption (amperes per meter length) of each LED Strip and the maximum current rating of the external 12V power supply used.
 
-As an example: The LED Strips I tested with were equipped with 3528 SMD LEDs (red, yellow or green), had 60 LEDs per meter length and were 5m long. They proved no problem at all and never triggered the overcurrent protection circuitry which was set to 2.2 Amperes.
+To give you a real world example: The external power supply I tested the device with was a MeanWell GS90A12 with a maximum current rating of 6.7A DC. Therefore I set the overcurrent limit to 2.2A per channel (the device itself doesn't need much). That limit allowed me to use LED Strips of 5m length with 60 LEDs (Type 3528 SMD in red, yellow or green) per meter. The overcurrent protection circuitry never got triggered.
 
-The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected by pressing the **mode selection** button.
+The light organ has 3 working modes: [Normal](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/NormalMode.mp4), [Rhythm](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/RhythmMode.mp4) and [Cyclic](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/Cyclic.mp4), which can be selected by pressing the **mode selection** button. 
 
-Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs) with mostly uncommon values. Please stick to those exact values as they define the quality of the 3 filters! All filter components were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
+Each of the 3 filter circuits uses an op amp and some passive components (Rs/Cs). The resistors with strange values (6k16, 14k7, 23k7 & 71k5) belong to the E48 (2%) or E96 (1%) series. The filter circuits were calculated with the help of **FilterLab** from Microchip. It's available at no cost, easy to use and very intuitive. 
 
 An Arduino Nano 328P continuously samples all 3 filter outputs und transforms their voltage levels into digital PWM signals which feed the output stages with their IRF540N Power MOSFETs. Overtemperature & overcurrent protection (overload OL protection) has been integrated. 
 
-The circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and therefore PCB size is limited to Euro card size. But this proved to be very fortunate in the end for I redesigned the output stages a few times and didn't have to redo the analog stages every time. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
+The electrical circuit had to be devided into 2 separate PCBs, a **Filter-PCB** and a **Power-PCB** as I only call the basic version of the Eagle Design Tool my own and PCB size is limited to Eurocard size. But this proved to be very fortunate in the end for I redesigned the output stages a few times but didn't have to redo the analog stages. Please have a look at folder [**EagleFiles**](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/EagleFiles) for schematic & PCB details.
 
 The block diagram of the light organ is as follows:
 
@@ -41,25 +41,25 @@ LED1 to LED6 have been added mainly for testing purposes. They come handy when y
      
 ### The Power-PCB: ###
 
-The little Arduino Nano 328P module is the ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
+The Arduino Nano 328P module is an ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
 
-The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/Software). The IDE used was VSCode/PlatformIO.
+The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/Software). The code was generated with VSCode/PlatformIO.
 
-The Power MOSFETs IRF540N work as High-Side Switch (common drain configuration) and need a gate voltage higher than TTL can provide in this application, thats why 12V DC-DC converters (I/O isolated) had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs must drive the MOSFETs gate voltage 10-12V higher than the supply voltage.
+The Power MOSFETs IRF540N work as High-Side Switches (in "common drain" configuration) and need a gate voltage higher than the Nano can provide in this application, thats why 12V DC-DC converters (I/O isolated -> output side floating) had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs must drive the MOSFETs gate voltage 10-12V higher than the supply voltage.
 
-Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and allow to utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects overcurrent it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent short on the output lines, provided you properly calibrated the trigger point of course!
+Shunt resistors (R6/R12/R18) are used between the MOSFETs and the LED strips in order to measure the output current and utilize the current sense input of the MOSFET drivers IR2125. When the IR2125 detects overcurrent it shuts down immediately until the next PWM impuls. The software in the Arduino Nano detects this condition and shuts down the affected channel for a few seconds before releasing it again. No harm is done at all in case you have a permanent short on the output lines, provided you properly calibrated the trigger point of course!
 
-The power stages by design could deliver a few amperes per channel, but in my case the external 12V power supply at hand (Mean Well GS90A12) can only deliver 6.7A DC, so I calibrated the current limit to about 2.2A per channel using trimpots (trimmer potentiometer R7/R13/R19). The driver MOSFETs IRF540N operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
+The power stages by design could deliver 3-4 amperes per channel without problems. In practice the limiting factor probably will be the external 12V DC power supply. The driver MOSFETs IRF540N (Idmax > 20A) operate way from their absolute maximum ratings and only get handwarm in the enclosure (Model EXN-23361-SV from Bud Industries).
 
-A temperature sensor LM35DZ connected to an Arduino Nano analog input pin is used to measure the temperature inside the enclosure. Temperatures over 50° celsius will shut down all channels and temperatures below 40° celsius will release them again. However, during my hour long tests the temperature overload never got triggered.
+A temperature sensor LM35DZ connected to an Arduino Nano analog input pin is used to measure the temperature inside the enclosure. Temperatures over 50° celsius will shut down all channels and only temperatures below 40° celsius will release them. However, during my hour long tests the temperature overload never got triggered for the temperature inside the enclosure always hovered around 35-38° celsius.
 
 JP1/JP2/JP3 are only needed for testing purposes, in normal working mode pins 1 & 2 should be shorted in order to allow the overload signal from the IR2125 ICs reach the Arduino Nano. R2/SV3 are only used for testing purposes as well.
 
-Push button S1 is only used for selecting the working mode.
+Push button S1 is used for selecting the working mode.
 
 The three TVS Diodes P6KE20A (D5/D9/D13) in parallel with the output sockets have a very fast response time and protect the device from possibly harmful voltage transients that might travel in from connected LED Strips. The latter act like big antennas when a few meters long!
 
-D1 provides the very stable reference voltage needed by the A/D converters in the Arduino Nano.
+D1 provides a very stable reference voltage needed by the A/D converters in the Arduino Nano.
 
 <img src="EagleFiles/Power-PCB/Schematic.JPG">
    
