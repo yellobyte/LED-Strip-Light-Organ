@@ -43,7 +43,7 @@ LED1 to LED6 have been added mainly for testing purposes. They come handy when y
 
 The Arduino Nano 328P module is an ideal device for sampling the three filter outputs and generating PWM signals needed by the power stages. It only runs on 16MHz but this proved to be fast enough for the task.
 
-The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/Software). The code was generated with VSCode/PlatformIO.
+The code running on the Arduino Nano is available in folder [Software](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Software). The code was generated with VSCode/PlatformIO.
 
 The Power MOSFETs IRF540N work as High-Side Switches (in "common drain" configuration) and need a gate voltage higher than the Nano can provide in this application, thats why 12V DC-DC converters (I/O isolated -> output side floating) had to be used. The reason is that the source voltage of the MOSFETs approaches the +12V= supply voltage when switched on. To keep the MOSFETs turned on the IR2125 outputs must drive the MOSFETs gate voltage 10-12V higher than the supply voltage.
 
