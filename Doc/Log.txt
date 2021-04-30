@@ -1,0 +1,32 @@
+--- Available filters and text transformations: colorize, debug, default, direct, hexlify, log2file, nocontrol, printable, send_on_enter, time--- More details at http://bit.ly/pio-monitor-filters
+--- Miniterm on COM3  38400,8,N,1 ---
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---
+Program (13.04.2018) started:
+temp reading: 73 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 75 -> 30 °C
+temp reading: 75 -> 30 °C
+new working mode: 1
+temp reading: 74 -> 29 °C
+new working mode: 2
+new working mode: 0
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+overload detected on channel A
+overload might be gone on channel A, we release it
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C
+temp reading: 74 -> 29 °C

@@ -8,7 +8,7 @@
  * Treble: level at ADC2 (PC2, Arduino Nano: A2) determines PWM value at OC2A (PB3, Arduino Nano: D11)
  *         associated overload signal at PB4 (PCINT4, Arduino Nano: D12)
  * Overload: LED at PB2 (Arduino Nano: D10)
- *           A single channel stays off for 10 sec after detecting a current overload.
+ *           A single channel stays off for 5 sec after detecting a current overload.
  *           After detecting thermal overload (ca. 50° celsius) ALL channels stay off until temperature
  *           drops below 40° celsius or after reboot when temp < 50 deg.
  * Temperature control: LM35 delivers 0mV + 10mV per deg celsius at ADC6 (Arduino Nano: A6). 
@@ -33,14 +33,15 @@ volatile uint16_t timer[NUM_CHANNELS];  // timer per channel (for overload handl
 volatile uint16_t timerTemperature;     // timer for checking temp
 volatile uint16_t timerMode;            // timer used in misc modes
 volatile uint8_t timerBlink;
-uint8_t workingMode;                    // 0 = normal light organ, 1 = bass rhythm, 2 = in turn) 
+uint8_t workingMode;                    // 0 = normal light organ, 1 = bass rhythm, 2 = cyclic) 
 
-uint8_t pwm, valueOld[NUM_CHANNELS], valueNew = 0, i = 0, ii = 0;
+uint8_t valueOld[NUM_CHANNELS], 
+        pwm, valueNew = 0, 
+        i = 0, ii = 0;
 uint16_t adc = 0;
 
-
-// 50% PWM on an LED does not mean 50% brightness (it's probably more 75%), therefore we need some 
-// kind of translation table for PWM -> brightness. Quite lot of testing was required on that issue.
+// 50% PWM on an LED actually does not mean 50% brightness (it's probably more 75%), therefore we need some 
+// kind of translation table for PWM -> brightness. Quite a lot of testing was required on that issue.
 // strongly exponential:
 /* uint8_t myExp[256] = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,                   // 0-15
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2,                                 // 16-31
@@ -59,7 +60,8 @@ uint16_t adc = 0;
             172, 175, 177, 179, 182, 184, 187, 189, 192, 194, 197, 199, 202, 204, 207, 209, // 224-239
             212, 215, 217, 220, 223, 226, 228, 231, 234, 237, 240, 243, 246, 249, 252, 255  // 240-255
 };*/
-// somewhat exponential
+
+// somewhat exponential - makes a good visual impression
 uint8_t myExp[256] = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3,
             4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8,
@@ -77,6 +79,7 @@ uint8_t myExp[256] = { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             196, 198, 200, 202, 203, 205, 207, 209, 211, 212, 214, 216, 218, 220, 222, 224,
             225, 227, 229, 231, 233, 235, 237, 239, 241, 243, 245, 247, 249, 251, 253, 255
 };
+
 /* alternatives, abandoned in favor of fixed array
 uint8_t myExp(float in) {
   float pwmf = (float) (in / 255);
@@ -85,13 +88,6 @@ uint8_t myExp(float in) {
   return pwmf * 255;
 }
 */
-
-// allows usage of "printf()"
-int serial_putc(char c, FILE *)
-{
-  Serial.write(c);
-  return c;
-}
 
 void ADCInit(uint8_t reference) {
 	
@@ -106,7 +102,7 @@ void ADCInit(uint8_t reference) {
             (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); // Set prescaler to 128
                                               // Fadc=Fcpu/prescaler=16000000/128=125kHz
                                               // Fadc should be between 50kHz and 200kHz
-  // interrupt routine not necessary
+  // interrupt routine, not used
   /*										
   ADCSRA |= (1<<ADIE)|                // interrupt enabled
             (1<<ADFR) or (1<<ADATE);  // for free running (depending on chip)
@@ -123,15 +119,15 @@ uint16_t ADCRead(uint8_t channel) {
 #endif
   ADMUX &= ~((1<<MUX2)|(1<<MUX1)|(1<<MUX0));
   ADMUX |= (channel & 0x07);
-  ADCSRA |= (1<<ADSC);            //Start Single conversion
-  while (!(ADCSRA & (1<<ADIF)));  //Wait for conversion to complete
-  ADCSRA |=(1<<ADIF);             //Clear ADIF by writing one to it
+  ADCSRA |= (1<<ADSC);                // start Single conversion
+  while (!(ADCSRA & (1<<ADIF)));      // wait for conversion to complete
+  ADCSRA |=(1<<ADIF);                 // clear ADIF by writing one to it
 	
   return (ADC);
 }
 
 /*
-// Interrupt subroutine for ADC conversion complete
+// Interrupt subroutine for ADC conversion complete, not used
 ISR(ADC_vect)
 {
   ...
@@ -146,7 +142,7 @@ long map(long x, long in_min, long in_max, long out_min, long out_max)
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-// checking mechanical switch for mode selection, returns 1 when falling edge on PB1 detected
+// checking switch for mode selection, returns 1 when falling edge on PB1 detected
 uint8_t switchCheck(void)
 {
   static uint8_t	portBuffer, 
@@ -224,7 +220,6 @@ ISR(TIMER1_COMPA_vect){
 
 void setup() {
   // put your setup code here, to run once:
-  fdevopen(&serial_putc, 0);
   Serial.begin(38400);
 
   overload = overloadMessage = 0;
@@ -236,26 +231,26 @@ void setup() {
   }
 	
   // port settings
-  DDRD |= ((1<<PD6) | (1<<PD5));          // PD6(D6) & PD5(D5) PWM output (OC0A & OC0B)
-  DDRB |= ((1<<PB3) | (1<<PB2));          // PB3(D11) PWM output (OC2A) & PB2(D10) output overload LED
+  DDRD = ((1<<PD6) | (1<<PD5));           // PD6(D6) & PD5(D5) PWM output (OC0A & OC0B)
+  DDRB = ((1<<PB3) | (1<<PB2));           // PB3(D11) PWM output (OC2A) & PB2(D10) output overload LED
   PORTB |= (1<<PB1);                      // activate pull-up for switch at PB1 (D9)
   PORTB &= ~(1<<PB2);                     // overload LED at PB2 (D10) off
 	
-  // initialize timer 0 & timer 2 for PWM
+  // initialize timer 0 (Ch A+B) & timer 2 (Ch C) for PWM
   OCR0A = OCR0B = OCR2A = 0;
 
-  TCCR0A |= (1<<WGM00);                   // phase correct PWM mode (mode 1) for timer 0
-  TCCR0A |= (1<<COM0A1) | (1<<COM0B1);    // none inverting mode for OC0A & OC0B
-  TCCR0B |= (1<<CS01) | (1<<CS00);        // prescaler to 64 (phase correct PWM: 490Hz) & start PWM
+  TCCR0A = (1<<WGM00);                    // phase correct PWM mode (mode 1) for timer 0 (Ch A+B)
+  TCCR0A |= ((1<<COM0A1) | (1<<COM0B1));  // none inverting mode for OC0A & OC0B
+  TCCR0B |= ((1<<CS01) | (1<<CS00));      // prescaler to 64 (phase correct PWM: 490Hz) & start PWM
 
-  TCCR2A |= (1<<WGM20);                   // phase correct PWM mode (mode 1) for timer 2
+  TCCR2A = (1<<WGM20);                    // phase correct PWM mode (mode 1) for timer 2 (Ch C)
   TCCR2A |= (1<<COM2A1);                  // none inverting mode for OC2A
   TCCR2B |= (1<<CS22);                    // prescaler to 64 (phase correct PWM: 490Hz) & start PWM
 
   // init timer 1
-  //TCCR1B |= (1<<CS11) | (1<<CS10);      // prescaler to 64 (top = 0xFFFF -> overflow irq every 0.26s)
+  //TCCR1B = (1<<CS11) | (1<<CS10);       // prescaler to 64 (top = 0xFFFF -> overflow irq every 0.26s)
   //TIMSK1 |= (1<<TOIE1);                 // timer 1 overflow interrupt enabled
-  TCCR1B |= ((1<<WGM12) | (1<<CS11) | (1<<CS10)); // prescaler to 64, CTC Mode 4 (OCR1A = TOP)
+  TCCR1B = ((1<<WGM12) | (1<<CS11) | (1<<CS10)); // prescaler to 64, CTC Mode 4 (OCR1A = TOP)
   OCR1A = 249;                            // 249: timer 1 interrupt every ms
   TIMSK1 |= (1<<OCIE1A);                  // timer 1 OC1A interrupt enabled
 
@@ -267,9 +262,9 @@ void setup() {
 
   //ADCInit(ADC_REF_VCC);                 // just for testing purposes
   ADCInit(ADC_REF_EXT);                   // initialize AD converter, Uref = 4.096V
-  sei();                                  // enable global interrupts
-	
-  Serial.println(PSTR("\r\nProgram (V18.04.13) started:"));
+  //sei();                                // enable global interrupts - not needed
+
+  Serial.println(F("Program (13.04.2018) started:"));
 	
   i = 0;
 }
@@ -280,26 +275,33 @@ void loop() {
     timerTemperature = 10000;
     adc = ADCRead(6);                     // read temp sensor (0..100 deg celsius), 10mV per deg
                                           // at Uref 4.096V --> 4mV per digit --> divisor 2.5
-    printf(PSTR("temp reading: %u => %u °C\r\n"), adc, (uint16_t)((float)adc/2.5));
+    Serial.print(F("temp reading: "));
+    Serial.print(adc);
+    Serial.print(F(" -> "));
+    Serial.print((uint16_t)((float)adc/2.5));
+    Serial.println(F(" °C"));
     if (!(overload & (1<<7)) && (adc > 124))	{ // 0.5V/4.096V*1024
       overload |= (1<<7);                 // temp overload triggered at >50 deg
-      printf(PSTR("thermal OL detected\r\n"));
+      Serial.println(F("thermal overload detected -> all channels off"));
     }
     else if ((overload & (1<<7)) && (adc < 100)) {	// 0.4V/4.096V*1024
       overload &= ~(1<<7);                // temp overload deleted at <40 deg
-      printf(PSTR("thermal OL has ended\r\n"));
+      Serial.println(F("thermal overload has ended"));
     }
   }
   if (overload & (1<<i)) {                // electr. overload on this channel ?
     valueNew = 0;                         // channel off
-    if (!(overload & (1<<7))) PORTB |= (1<<PB2);  // LED On permanently if no thermal OL
+    if (!(overload & (1<<7))) PORTB |= (1<<PB2);  // LED permanently on if no overtemperature
     if (overloadMessage & (1<<i)) {       // message to be sent for this channel
-      printf(PSTR("electr. OL detected on channel %c\r\n"), 'A'+i);
+      Serial.print(F("overload detected on channel "));
+      Serial.println((char)('A'+i));
       overloadMessage &= ~(1<<i);	
     }
     if (timer[i] == 0) {                  // timer expired ?
       overload &= ~(1<<i);                // clear electr. overload for this channel
-      printf(PSTR("electr. OL might be gone on channel %c, we release it\r\n"), 'A'+i);
+      Serial.print(F("overload might be gone on channel "));
+      Serial.print((char)('A'+i));
+      Serial.println(F(", we release it"));
     }
   }
   if (overload & (1<<7)) {                // thermal overload of system ?
@@ -338,7 +340,7 @@ void loop() {
         ii++;
         adc0 = adc1 = adc2 = 0;
       }
-      // TEST
+      // TEST TEST
       /*else {
         PORTB |= (1<<PB2);
         _delay_us(20);
@@ -362,16 +364,22 @@ void loop() {
   }
 	
   if (valueNew != valueOld[i]) {
-    if (i != 2) 
-      pwm = myExp[valueNew];            // translating PWM to brightness (only for bass & middle frequ)
-    else 
+    if (i != 2) {
+      pwm = myExp[valueNew];            // translating PWM value to brightness (only for bass & middle frequ)
+    }  
+    else {
       pwm = valueNew;                   // no transaltion for treble (proved to be best solution visually)
-    if (i == 0)
+    }  
+    // write PWM value into register
+    if (i == 0) {
       OCR0A = pwm;
-    else if (i == 1)
+    }  
+    else if (i == 1) {
       OCR0B = pwm;
-    else
+    }
+    else {
       OCR2A = pwm;
+    }  
     valueOld[i] = valueNew;
   }
 	
@@ -381,7 +389,8 @@ void loop() {
 	
   if (i == 0 && switchCheck()) {        // switch pressed ?
     workingMode =  (workingMode + 1) % NUM_WORKING_MODES;
-    printf(PSTR("new working mode: %d\r\n"), workingMode);
+    Serial.print(F("new working mode: "));
+    Serial.println(workingMode);
   }
 
   i++;
