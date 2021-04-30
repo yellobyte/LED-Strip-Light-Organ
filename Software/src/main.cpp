@@ -323,8 +323,8 @@ void loop() {
       if (adc > highLevel[i]) adc = highLevel[i];
       valueNew = map(adc,lowLevel[i],highLevel[i],0,255);       // new value 0..255 represents desired brightness
     }
-		else if (workingMode == 1) {
-			// switch to next channel when bass channel shows steep edge (rhythm mode)
+    else if (workingMode == 1) {
+      // switch to next channel when bass channel shows steep edge (rhythm mode)
       static int16_t adc0 = 0, adc1 = 0, adc2 = 0, adc3 = 0;
       _delay_ms(12);
       adc0 = adc1;
