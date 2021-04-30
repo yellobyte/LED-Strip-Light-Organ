@@ -23,6 +23,7 @@
 #define NUM_WORKING_MODES 3
 #define NUM_CHANNELS      3
 #define OL_TIMER_VALUE    5000          // 5s
+#define TIMER_TEMPERATURE 10000         // 10s
 #define ADC_REF_EXT       0
 #define ADC_REF_VCC       1
 
@@ -33,7 +34,7 @@ volatile uint16_t timer[NUM_CHANNELS];  // timer per channel (for overload handl
 volatile uint16_t timerTemperature;     // timer for checking temp
 volatile uint16_t timerMode;            // timer used in misc modes
 volatile uint8_t timerBlink;
-uint8_t workingMode;                    // 0 = normal light organ, 1 = bass rhythm, 2 = cyclic) 
+uint8_t workingMode;                    // 0 = normal light organ, 1 = bass rhythm, 2 = cyclic 
 
 uint8_t valueOld[NUM_CHANNELS], 
         pwm, valueNew = 0, 
@@ -102,11 +103,11 @@ void ADCInit(uint8_t reference) {
             (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); // Set prescaler to 128
                                               // Fadc=Fcpu/prescaler=16000000/128=125kHz
                                               // Fadc should be between 50kHz and 200kHz
-  // interrupt routine, not used
+  // in case interrupt routine is used
   /*										
-  ADCSRA |= (1<<ADIE)|                // interrupt enabled
-            (1<<ADFR) or (1<<ADATE);  // for free running (depending on chip)
-  ADCSRA |= (1<<ADSC);                // Start first conversion
+  ADCSRA |= (1<<ADIE)|                  // interrupt enabled
+            (1<<ADFR) or (1<<ADATE);    // for free running (depending on chip)
+  ADCSRA |= (1<<ADSC);                  // Start first conversion
   */
 }
 
@@ -127,7 +128,7 @@ uint16_t ADCRead(uint8_t channel) {
 }
 
 /*
-// Interrupt subroutine for ADC conversion complete, not used
+// Interrupt routine for ADC conversion complete, not used
 ISR(ADC_vect)
 {
   ...
@@ -145,9 +146,9 @@ long map(long x, long in_min, long in_max, long out_min, long out_max)
 // checking switch for mode selection, returns 1 when falling edge on PB1 detected
 uint8_t switchCheck(void)
 {
-  static uint8_t	portBuffer, 
+  static uint8_t  portBuffer, 
                   oldStatus = 1;  // switch not pressed
-  uint8_t	ret = 0;
+  uint8_t ret = 0;
   uint8_t counter;
 
   if ((PINB & (1<<PB1)) != (portBuffer & (1<<PB1))) {
@@ -223,7 +224,7 @@ void setup() {
   Serial.begin(38400);
 
   overload = overloadMessage = 0;
-  timerTemperature = 10000;
+  timerTemperature = TIMER_TEMPERATURE;
   timerMode = timerBlink = 0;
   workingMode = 0;
   for ( i=0; i<NUM_CHANNELS; i++) {
@@ -262,7 +263,7 @@ void setup() {
 
   //ADCInit(ADC_REF_VCC);                 // just for testing purposes
   ADCInit(ADC_REF_EXT);                   // initialize AD converter, Uref = 4.096V
-  //sei();                                // enable global interrupts - not needed
+  //sei();                                // enable global interrupts - done in framework
 
   Serial.println(F("Program (13.04.2018) started:"));
 	
@@ -272,7 +273,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if (timerTemperature == 0) {            // 10 sec timeout ?
-    timerTemperature = 10000;
+    timerTemperature = TIMER_TEMPERATURE;
     adc = ADCRead(6);                     // read temp sensor (0..100 deg celsius), 10mV per deg
                                           // at Uref 4.096V --> 4mV per digit --> divisor 2.5
     Serial.print(F("temp reading: "));
