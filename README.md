@@ -1,4 +1,4 @@
-# LED-Strip Light Organ #
+# 3-Channel LED-Strip Light Organ with Arduino Nano #
 
 A light (or color) organ is an electronic device which converts an audio signal into rhythmic light effects. Invented in the 70's they are still popular in discotheques and party rooms though.
 Now that **LED Strips** became fairly cheap they can replace normal light bulbs used in the earlier years and make the color organ look more modern.
