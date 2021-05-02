@@ -352,7 +352,7 @@ void loop() {
       else
         valueNew = 0;
     }
-		else {  // cyclic mode
+    else {  // cyclic mode
       if (timerMode == 0) {
         timerMode = 300;
         ii++;
