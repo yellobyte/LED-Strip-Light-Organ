@@ -25,6 +25,21 @@ The block diagram of the light organ is as follows:
 
 <img src="Doc/BlockDiagram.jpg">
    
+The two [boards](https://github.com/yellobyte/LED-Strip-Light-Organ/blob/main/Doc/BoardTop.JPG) are connected as follows:
+
+```c
+ Filter-PCB ---  Power-PCB
+      LSP7  ---  LSP9  (analog audio)
+      LSP8  ---  LSP2  (+12V=)
+      A-IN  ---  A-OUT (PWM channel A)
+      B-IN  ---  B-OUT (PWM channel B)
+      C-IN  ---  C-OUT (PWM channel C)
+      A-OUT ---  A-IN  (filter output channel A)
+      B-OUT ---  B-IN  (filter output channel B)
+      C-OUT ---  C-IN  (filter output channel C)  
+      GNDs  ---  GNDs   
+```        
+
 ### The Filter-PCB: ###
 
 The MC33078 Op amps in the pre-amplifier and AGC stages proved perfect for the task. They might be substituted with cheaper Op amps, e.g. TL082, TLC277 or MC1458 but this comes with a loss of signal quality (distortion!). Especially the MC1458 wasn't able to pull the signal fully down to the lower rail and the TLC277 showed some crossover distortion.
